@@ -19,8 +19,11 @@
   },
   "homepage": "https://github.com/archiesuyono/Badabing-Space#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "nodemailer": "^8.0.4",
     "nodemon": "^3.1.14",
     "pg": "^8.20.0",
     "sequelize": "^6.37.8",
