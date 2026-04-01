@@ -1,0 +1,323 @@
+<%- include('header') %>
+<style>
+    .profile-wrap {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 4rem;
+    }
+
+    .profile-user {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem 2.2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .profile-user::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        width: 40%; height: 100%;
+        background: radial-gradient(ellipse at right, rgba(123,97,255,0.1), transparent 70%);
+        pointer-events: none;
+    }
+
+    .profile-user-inner {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.8rem;
+        position: relative; z-index: 1;
+    }
+
+    .profile-photo-wrap {
+        flex-shrink: 0;
+    }
+
+    .profile-photo {
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border);
+        display: block;
+    }
+
+    .profile-no-photo {
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent3), var(--accent2));
+        display: flex; align-items: center; justify-content: center;
+        font: 700 2rem 'Bebas Neue', sans-serif;
+        color: #fff;
+        border: 3px solid var(--border);
+        letter-spacing: 1px;
+    }
+
+    .profile-info { flex: 1; }
+
+    .profile-name {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.2rem;
+        letter-spacing: 1.5px;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-desc {
+        color: rgba(232,232,240,0.65);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        max-width: 480px;
+    }
+
+    .profile-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.5rem 1.2rem;
+        border-radius: 7px;
+        font: 600 0.82rem 'DM Sans', sans-serif;
+        margin-top: 1rem;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .profile-edit-btn:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.15);
+    }
+
+    .profile-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.2rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--border);
+    }
+    .stat { text-align: center; }
+    .stat-num {
+        font: 700 1.4rem 'Bebas Neue', sans-serif;
+        letter-spacing: 1px;
+        color: var(--text);
+        line-height: 1;
+    }
+    .stat-label {
+        font: 0.72rem 'Space Mono', monospace;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-top: 2px;
+    }
+
+    .posts-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+    }
+    .posts-heading {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: 1.5px;
+    }
+    .posts-count {
+        font: 0.78rem 'Space Mono', monospace;
+        color: var(--muted);
+    }
+
+    .post-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.3rem 1.5rem;
+        margin-bottom: 0.9rem;
+        transition: border-color 0.2s, transform 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+    .post-card:hover { border-color: rgba(255,255,255,0.11); transform: translateY(-2px); }
+    .post-card.flagged { border-color: rgba(255,77,109,0.25); }
+
+    .post-bar {
+        position: absolute; top: 0; left: 0;
+        width: 3px; height: 100%;
+        background: var(--accent3);
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .post-card:hover .post-bar { opacity: 1; }
+    .post-card.flagged .post-bar { background: var(--accent2); opacity: 1; }
+
+    .post-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.3rem;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.4rem;
+    }
+    .post-content {
+        color: rgba(232,232,240,0.68);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+    .post-image {
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 0.8rem 0;
+    }
+    .post-footer {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+    }
+    .tag-chip {
+        display: inline-flex;
+        text-decoration: none;
+        background: rgba(123,97,255,0.12);
+        color: var(--accent3);
+        border: 1px solid rgba(123,97,255,0.25);
+        padding: 0.18rem 0.6rem;
+        border-radius: 4px;
+        font: 700 0.72rem 'Space Mono', monospace;
+        transition: background 0.2s;
+    }
+    .tag-chip:hover { background: rgba(123,97,255,0.25); }
+
+    .post-time {
+        font: 0.75rem 'Space Mono', monospace;
+        color: var(--muted);
+    }
+    .spacer { margin-left: auto; }
+    .like-info {
+        font: 700 0.8rem 'Space Mono', monospace;
+        color: var(--muted);
+    }
+    .like-info .count { color: var(--accent2); }
+    .flag-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255,77,109,0.1);
+        border: 1px solid rgba(255,77,109,0.25);
+        color: var(--accent2);
+        border-radius: 4px;
+        padding: 0.2rem 0.6rem;
+        font: 700 0.72rem 'Space Mono', monospace;
+        margin-bottom: 0.7rem;
+    }
+
+    .btn {
+        display: inline-flex; align-items: center; gap: 4px;
+        text-decoration: none;
+        border-radius: 5px;
+        padding: 0.28rem 0.7rem;
+        font: 600 0.76rem 'DM Sans', sans-serif;
+        cursor: pointer; border: none;
+        transition: opacity 0.2s, transform 0.15s;
+        white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+    .btn-like    { background: rgba(255,77,109,0.12); color: var(--accent2); border: 1px solid rgba(255,77,109,0.25); }
+    .btn-unlike  { background: rgba(255,77,109,0.22); color: var(--accent2); border: 1px solid rgba(255,77,109,0.45); }
+    .btn-delete  { background: rgba(255,60,60,0.12);  color: #ff6b6b; border: 1px solid rgba(255,60,60,0.25); }
+    .btn-flag    { background: rgba(255,180,0,0.1);   color: #ffb400; border: 1px solid rgba(255,180,0,0.25); }
+    .btn-unflag  { background: rgba(200,255,0,0.08);  color: var(--accent); border: 1px solid rgba(200,255,0,0.2); }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeUp 0.45s ease both; }
+</style>
+
+<div class="profile-wrap">
+    <div class="profile-user animate-in">
+        <div class="profile-user-inner">
+            <div class="profile-photo-wrap">
+                <% if (profile.photo) { %>
+                <img class="profile-photo" src="<%= profile.photo %>" alt="<%= profile.name %>">
+                <% } else { %>
+                <div class="profile-no-photo"><%= profile.name ? profile.name.charAt(0).toUpperCase() : '?' %></div>
+                <% } %>
+            </div>
+            <div class="profile-info">
+                <div class="profile-name"><%= profile.name || 'Anonymous' %></div>
+                <div class="profile-desc"><%= profile.description || 'No bio yet.' %></div>
+                <% if (isOwner) { %>
+                <a href="/profile/<%= profile.id %>/edit" class="profile-edit-btn">
+                    ✎ Edit Profile
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <div class="profile-stats">
+            <div class="stat">
+                <div class="stat-num"><%= profile.Posts ? profile.Posts.length : 0 %></div>
+                <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat">
+                <% var totalLikes = 0; if(profile.Posts){ profile.Posts.forEach(function(p){ totalLikes += (likeCounts[p.id] || 0); }); } %>
+                <div class="stat-num"><%= totalLikes %></div>
+                <div class="stat-label">Likes</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="posts-header">
+        <h2 class="posts-heading"><%= isOwner ? 'My Posts' : 'Posts' %></h2>
+        <span class="posts-count"><%= profile.Posts ? profile.Posts.length : 0 %> posts</span>
+    </div>
+
+    <% if (profile.Posts && profile.Posts.length) { %>
+        <% profile.Posts.forEach((el, i) => { %>
+        <article class="post-card <%= el.isFlagged ? 'flagged' : '' %>" style="animation: fadeUp 0.4s ease <%= i * 0.05 %>s both;">
+            <div class="post-bar"></div>
+            <% if (el.isFlagged) { %>
+            <div class="flag-badge">⚠ Flagged by admin</div>
+            <% } %>
+            <% if (el.imageUrl) { %>
+            <img class="post-image" src="<%= el.imageUrl %>" alt="post image">
+            <% } %>
+            <div class="post-title"><%= el.title %></div>
+            <div class="post-content"><%= el.content %></div>
+            <div class="post-footer">
+                <% if (el.Tags && el.Tags.length) { %>
+                <span class="tag-chip">#<%= el.Tags[0].name %></span>
+                <% } %>
+                <span class="post-time"><%= el.publishedTime %></span>
+                <div class="spacer"></div>
+                <span class="like-info">♥ <span class="count"><%= likeCounts[el.id] || 0 %></span></span>
+                <% if (likedPostIds.includes(el.id)) { %>
+                <a class="btn btn-unlike" href="/explore/<%= el.id %>/unlike">♥ Liked</a>
+                <% } else { %>
+                <a class="btn btn-like" href="/explore/<%= el.id %>/like">♡ Like</a>
+                <% } %>
+                <% if (isOwner || (isAdmin && el.isFlagged)) { %>
+                <a class="btn btn-delete" href="/profile/<%= profile.id %>/post/<%= el.id %>/delete">✕ Delete</a>
+                <% } %>
+                <% if (isAdmin && !el.isFlagged) { %>
+                <a class="btn btn-flag" href="/explore/<%= el.id %>/flag">⚑ Flag</a>
+                <% } %>
+                <% if (isAdmin && el.isFlagged) { %>
+                <a class="btn btn-unflag" href="/explore/<%= el.id %>/unflag">↩ Unflag</a>
+                <% } %>
+            </div>
+        </article>
+        <% }) %>
+    <% } else { %>
+    <div class="empty-state">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">◎</div>
+        <div><%= isOwner ? "You haven't posted anything yet." : "No posts yet." %></div>
+    </div>
+    <% } %>
+</div>
+</body>
+</html>

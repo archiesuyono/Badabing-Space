@@ -1,0 +1,284 @@
+<%- include('header') %>
+<style>
+    .search-wrap {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 4rem;
+    }
+
+    .search-heading {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.4rem;
+        letter-spacing: 2px;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+    }
+    .search-sub {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin-bottom: 0.5rem;
+    }
+    .search-query-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.3rem 0.8rem;
+        font: 700 0.82rem 'Space Mono', monospace;
+        color: var(--text);
+        margin-bottom: 2rem;
+    }
+    .search-query-badge em {
+        font-style: normal;
+        color: var(--accent3);
+    }
+    .search-mode {
+        font-size: 0.7rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-right: 1px solid var(--border);
+        padding-right: 0.7rem;
+        margin-right: 0.2rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1rem;
+    }
+
+    .profile-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: border-color 0.2s, transform 0.2s;
+        animation: fadeUp 0.4s ease both;
+    }
+    .profile-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-3px); }
+
+    .profile-card-photo {
+        width: 68px; height: 68px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border);
+        margin: 0 auto 0.8rem;
+        display: block;
+    }
+    .profile-card-no-photo {
+        width: 68px; height: 68px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent3), var(--accent2));
+        display: flex; align-items: center; justify-content: center;
+        font: 700 1.4rem 'Bebas Neue', sans-serif;
+        color: #fff;
+        margin: 0 auto 0.8rem;
+        border: 3px solid var(--border);
+    }
+    .profile-card-name {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.2rem;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.4rem;
+    }
+    .profile-card-desc {
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .profile-visit-btn {
+        display: inline-block;
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.42rem 1.2rem;
+        border-radius: 6px;
+        font: 600 0.78rem 'DM Sans', sans-serif;
+        transition: all 0.2s;
+    }
+    .profile-visit-btn:hover {
+        background: rgba(123,97,255,0.12);
+        border-color: rgba(123,97,255,0.35);
+        color: var(--accent3);
+    }
+
+    .post-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.3rem 1.5rem;
+        margin-bottom: 0.9rem;
+        transition: border-color 0.2s, transform 0.2s;
+        position: relative;
+        overflow: hidden;
+        animation: fadeUp 0.4s ease both;
+    }
+    .post-card:hover { border-color: rgba(255,255,255,0.11); transform: translateY(-2px); }
+    .post-card.flagged { border-color: rgba(255,77,109,0.25); }
+
+    .post-bar {
+        position: absolute; top: 0; left: 0;
+        width: 3px; height: 100%;
+        background: var(--accent3); opacity: 0;
+        transition: opacity 0.2s;
+    }
+    .post-card:hover .post-bar { opacity: 1; }
+    .post-card.flagged .post-bar { background: var(--accent2); opacity: 1; }
+
+    .post-by {
+        font: 0.78rem 'Space Mono', monospace;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+    }
+    .post-by strong { color: var(--text); }
+
+    .post-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.3rem;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.4rem;
+    }
+    .post-content {
+        color: rgba(232,232,240,0.68);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+    .post-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 0.8rem 0;
+    }
+    .post-footer {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+    }
+    .spacer { margin-left: auto; }
+    .like-info { font: 700 0.8rem 'Space Mono', monospace; color: var(--muted); }
+    .like-info .count { color: var(--accent2); }
+    .flag-badge {
+        display: inline-flex; gap: 5px;
+        background: rgba(255,77,109,0.1);
+        border: 1px solid rgba(255,77,109,0.25);
+        color: var(--accent2);
+        border-radius: 4px;
+        padding: 0.2rem 0.6rem;
+        font: 700 0.72rem 'Space Mono', monospace;
+        margin-bottom: 0.7rem;
+    }
+
+    .btn {
+        display: inline-flex; align-items: center; gap: 4px;
+        text-decoration: none; border: none;
+        border-radius: 5px;
+        padding: 0.28rem 0.7rem;
+        font: 600 0.76rem 'DM Sans', sans-serif;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
+        white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+    .btn-like   { background: rgba(255,77,109,0.12); color: var(--accent2); border: 1px solid rgba(255,77,109,0.25); }
+    .btn-unlike { background: rgba(255,77,109,0.22); color: var(--accent2); border: 1px solid rgba(255,77,109,0.45); }
+    .btn-delete { background: rgba(255,60,60,0.12);  color: #ff6b6b; border: 1px solid rgba(255,60,60,0.25); }
+    .btn-flag   { background: rgba(255,180,0,0.1);   color: #ffb400; border: 1px solid rgba(255,180,0,0.25); }
+    .btn-unflag { background: rgba(200,255,0,0.08);  color: var(--accent); border: 1px solid rgba(200,255,0,0.2); }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeUp 0.4s ease both; }
+</style>
+
+<div class="search-wrap">
+    <div class="animate-in">
+        <h1 class="search-heading">Search Results</h1>
+        <p class="search-sub">Showing results for</p>
+        <div class="search-query-badge">
+            <span class="search-mode"><%= searchBy === 'profile' ? 'Profile' : 'Tag' %></span>
+            <em>"<%= search %>"</em>
+        </div>
+    </div>
+
+    <% if (searchBy === "profile") { %>
+        <% if (profiles.length) { %>
+        <div class="profile-grid">
+            <% profiles.forEach((el, i) => { %>
+            <div class="profile-card" style="animation-delay: <%= i * 0.06 %>s">
+                <% if (el.photo) { %>
+                <img class="profile-card-photo" src="<%= el.photo %>" alt="<%= el.name %>">
+                <% } else { %>
+                <div class="profile-card-no-photo"><%= el.name ? el.name.charAt(0).toUpperCase() : '?' %></div>
+                <% } %>
+                <div class="profile-card-name"><%= el.name || 'Unknown' %></div>
+                <div class="profile-card-desc"><%= el.description || 'No bio yet.' %></div>
+                <a href="/profile/<%= el.id %>" class="profile-visit-btn">View Profile →</a>
+            </div>
+            <% }) %>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+            <div style="font-size:2rem;margin-bottom:0.75rem;">◎</div>
+            <div>No profiles match "<%= search %>"</div>
+        </div>
+        <% } %>
+
+    <% } else { %>
+        <% if (postTags.length) { %>
+            <% postTags.forEach((el, i) => { %>
+            <article class="post-card <%= el.isFlagged ? 'flagged' : '' %>" style="animation-delay: <%= i * 0.05 %>s">
+                <div class="post-bar"></div>
+                <% if (el.isFlagged) { %>
+                <div class="flag-badge">⚠ Flagged by admin</div>
+                <% } %>
+                <% if (el.imageUrl) { %>
+                <img class="post-image" src="<%= el.imageUrl %>" alt="post image">
+                <% } %>
+                <div class="post-by">By <strong><%= el.Profile ? el.Profile.name : 'Unknown' %></strong></div>
+                <div class="post-title"><%= el.title %></div>
+                <div class="post-content"><%= el.content %></div>
+                <div class="post-footer">
+                    <div class="spacer"></div>
+                    <span class="like-info">♥ <span class="count"><%= likeCounts[el.id] || 0 %></span></span>
+                    <% if (likedPostIds.includes(el.id)) { %>
+                    <a class="btn btn-unlike" href="/explore/<%= el.id %>/unlike">♥ Liked</a>
+                    <% } else { %>
+                    <a class="btn btn-like" href="/explore/<%= el.id %>/like">♡ Like</a>
+                    <% } %>
+                    <% if (isAdmin && !el.isFlagged) { %>
+                    <a class="btn btn-flag" href="/explore/<%= el.id %>/flag">⚑ Flag</a>
+                    <% } %>
+                    <% if (isAdmin && el.isFlagged) { %>
+                    <a class="btn btn-unflag" href="/explore/<%= el.id %>/unflag">↩ Unflag</a>
+                    <a class="btn btn-delete" href="/profile/<%= el.ProfileId %>/post/<%= el.id %>/delete">✕ Delete</a>
+                    <% } %>
+                </div>
+            </article>
+            <% }) %>
+        <% } else { %>
+        <div class="empty-state">
+            <div style="font-size:2rem;margin-bottom:0.75rem;">◎</div>
+            <div>No posts found with tag "<%= search %>"</div>
+        </div>
+        <% } %>
+    <% } %>
+</div>
+</body>
+</html>

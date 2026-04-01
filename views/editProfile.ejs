@@ -1,0 +1,157 @@
+<%- include('header') %>
+<style>
+    .edit-wrap {
+        max-width: 580px;
+        margin: 3rem auto;
+        padding: 0 1.5rem 4rem;
+    }
+
+    .edit-heading {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.6rem;
+        letter-spacing: 2px;
+        margin-bottom: 0.25rem;
+    }
+    .edit-sub {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin-bottom: 2rem;
+    }
+
+    .edit-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 2rem;
+    }
+
+    .field-label {
+        display: block;
+        font: 700 0.72rem 'Space Mono', monospace;
+        color: var(--muted);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 0.4rem;
+    }
+
+    .field-input, .field-textarea {
+        width: 100%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        padding: 0.75rem 1rem;
+        font: 0.9rem 'DM Sans', sans-serif;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        margin-bottom: 1.2rem;
+    }
+    .field-input:focus, .field-textarea:focus {
+        border-color: rgba(200,255,0,0.45);
+        box-shadow: 0 0 0 3px rgba(200,255,0,0.07);
+    }
+    .field-input::placeholder, .field-textarea::placeholder { color: var(--muted); }
+    .field-textarea { min-height: 120px; resize: vertical; }
+
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .save-btn {
+        flex: 1;
+        background: var(--accent);
+        color: #0a0a0f;
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem;
+        font: 700 0.85rem 'Space Mono', monospace;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
+    }
+    .save-btn:hover { opacity: 0.87; transform: translateY(-1px); }
+
+    .cancel-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        border-radius: 8px;
+        padding: 0.8rem 1.4rem;
+        font: 600 0.85rem 'DM Sans', sans-serif;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .cancel-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); border-color: rgba(255,255,255,0.12); }
+
+    .preview-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--surface2);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    .preview-photo {
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--border);
+    }
+    .preview-placeholder {
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent3), var(--accent2));
+        display: flex; align-items: center; justify-content: center;
+        font: 700 1.2rem 'Bebas Neue', sans-serif;
+        color: #fff;
+        border: 2px solid var(--border);
+    }
+    .preview-text { font-size: 0.85rem; color: var(--muted); }
+    .preview-text strong { display: block; color: var(--text); margin-bottom: 2px; }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeUp 0.4s ease both; }
+    .d1 { animation-delay: 0.05s; }
+    .d2 { animation-delay: 0.12s; }
+</style>
+
+<div class="edit-wrap">
+    <div class="animate-in d1">
+        <h1 class="edit-heading">Edit Profile</h1>
+        <p class="edit-sub">Update your public profile information</p>
+    </div>
+
+    <div class="edit-card animate-in d2">
+        <% if (profile.photo) { %>
+        <div class="preview-section">
+            <img class="preview-photo" src="<%= profile.photo %>" alt="Current photo">
+            <div class="preview-text"><strong><%= profile.name || 'Your Name' %></strong>Current profile photo</div>
+        </div>
+        <% } %>
+
+        <form action="/profile/<%= profile.id %>/edit" method="post">
+            <label class="field-label">Photo URL</label>
+            <input class="field-input" type="text" name="photo" value="<%= profile.photo || '' %>" placeholder="https://...">
+
+            <label class="field-label">Display Name</label>
+            <input class="field-input" type="text" name="name" value="<%= profile.name || '' %>" placeholder="Your name">
+
+            <label class="field-label">Bio</label>
+            <textarea class="field-textarea" name="description" placeholder="Tell people a bit about yourself..."><%= profile.description || '' %></textarea>
+
+            <div class="form-actions">
+                <button class="save-btn" type="submit">SAVE CHANGES →</button>
+                <a href="/profile" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
